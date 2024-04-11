@@ -30,9 +30,9 @@
  1. writer.py
  This file is used to write data onto the kafka topic (In this case, the topic it is writing to is reddit_comments). This file keeps extracting comments from reddit until terminated.   
  It takes 1 argument - kafka topic on which it has to write.   
- 
+
  Syntax: python3 writer.py <topic_name>    
- Ex: python3 writer.py reddit_comments  
+ Ex: python3 writer.py reddit_comments   
 
  2. wordcount.py   
  This is to be run with spark-submit. It writes the output onto another kafka file(In this case, the topic it is writing to is wordCountOutput). It runs until termination and calculates a running word count.    
@@ -41,3 +41,4 @@
 
  Syntax: spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1 wordcount.py <bootstrap_server> <subscribe_mode> <topic_1> <topic_2>   
  Ex: spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1 wordcount.py localhost:9092 subscribe reddit_comments wordcount   
+
