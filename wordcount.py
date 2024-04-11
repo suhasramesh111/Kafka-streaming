@@ -28,7 +28,7 @@ words = lines.select(explode(split(lines.value, ' ')).alias('word'))
 wordCounts = words.groupBy('word').count().orderBy('count',ascending = False)
 
 query = wordCounts\
-	.selectExpr("CAST(count AS STRING) AS value")\
+	.selectExpr("CAST(word AS STRING) AS key, CAST(count AS STRING) AS value")\
         .writeStream\
         .outputMode('complete')\
         .format('kafka')\
