@@ -22,6 +22,13 @@ producer = KafkaProducer(bootstrap_servers=['172.19.49.193:9092'])  # Encode dat
 topic_name = str(sys.argv[1])
 subreddit = reddit.subreddit('askReddit')
 
+'''
+for comment in subreddit.stream.comments():
+    message = f"{comment.body}"
+    if message:  # Filter out empty comments  
+        producer.send(topic_name, value=message)
+'''
+
 for comment in subreddit.stream.comments():
     cleaned_message = clean_comment(comment.body)
     if cleaned_message:

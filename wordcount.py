@@ -1,6 +1,8 @@
 import sys
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode, split
+from pyspark.sql.types import *
+from pyspark.sql.functions import explode, split, col, to_json, struct, udf
+import spacy
 
 bootstrapServers = sys.argv[1]
 subscribeType = sys.argv[2]
@@ -14,6 +16,17 @@ spark = SparkSession\
 
 spark.sparkContext.setLogLevel("ERROR")
 
+#loal the spacy model
+nlp = spacy.load("en_core_web_sm")
+
+#udf - User Defined Function for dataframe
+def ner(raw_text):
+    doc = nlp(raw_text)
+    entities = [ent.text for ent in doc.ents]
+    return ' '.join(entities) if entities else None
+
+ner_udf = udf(ner, StringType())
+
 lines = spark\
         .readStream\
         .format("kafka")\
@@ -23,14 +36,14 @@ lines = spark\
         .load()\
         .selectExpr("CAST(value AS STRING)")
 
-words = lines.select(explode(split(lines.value, ' ')).alias('word'))
+words = lines.select(explode(split(ner_udf('value'), ' ')).alias('word'))
 
-wordCounts = words.groupBy('word').count().orderBy('count',ascending = False)
+wordCounts = words.groupBy('word').count()
 
 query = wordCounts\
-	.selectExpr("CAST(word AS STRING) AS key, CAST(count AS STRING) AS value")\
+        .select(to_json(struct(col("word"), col("count"))).alias("value"))\
         .writeStream\
-        .outputMode('complete')\
+        .outputMode('update')\
         .format('kafka')\
 	.option("kafka.bootstrap.servers", bootstrapServers)\
 	.option("topic", output)\
