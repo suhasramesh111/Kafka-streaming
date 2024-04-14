@@ -98,6 +98,6 @@ Now, start up logstash :
 
 	It also takes 3 arguments - Bootstrap server(server on which kafka is running), subscribe mode, topic where the comments are being sent, topic where the output has to be written to.
 
-	Syntax: spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1 wordcount.py **bootstrap_server  subscribe_mode  topic_1  topic_2**
+	Syntax: spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1 wordcount.py **bootstrap_server  subscribe_mode  topic_1  topic_2**
 
-    Sample usage : `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1 wordcount.py localhost:9092 subscribe reddit_comments wordcount`
+    Sample usage : `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1 wordcount.py localhost:9092 subscribe reddit_comments wordcount`
